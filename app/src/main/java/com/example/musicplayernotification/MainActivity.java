@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -37,15 +38,25 @@ public class MainActivity extends AppCompatActivity implements Playable{
         //
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             createChannel();
+            registerReceiver(broadcastReceiver, new IntentFilter("TRACKS_TRACKS"));
+            startService(new Intent(getBaseContext(), OnClearFromRecentService.class));
         }
         //
         binding.mainIbtnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CreateNotification.createNotification(MainActivity.this,
-                        tracks.get(1), R.drawable.play, 1, tracks.size()-1);
+                if(isPlaying){
+                    onTrackPause();
+                }
+                else {
+                    onTrackPlay();
+                }
+//                CreateNotification.createNotification(MainActivity.this,
+//                        tracks.get(1), R.drawable.play, 1, tracks.size()-1);
             }
         });
+        //
+
 
     }
 
@@ -110,16 +121,41 @@ public class MainActivity extends AppCompatActivity implements Playable{
 
     @Override
     public void onTrackPlay() {
+        CreateNotification.createNotification(MainActivity.this, tracks.get(position)
+                , R.drawable.pause, position, tracks.size()-1);
 
+        binding.mainIbtnPlay.setImageResource(R.drawable.pause);
+
+        binding.mainTvTitle.setText(tracks.get(position).getTitle());
+        isPlaying = true;
     }
 
     @Override
     public void onTrackPause() {
+        CreateNotification.createNotification(MainActivity.this, tracks.get(position)
+                , R.drawable.play, position, tracks.size()-1);
 
+        binding.mainIbtnPlay.setImageResource(R.drawable.play);
+
+        binding.mainTvTitle.setText(tracks.get(position).getTitle());
+        isPlaying = false;
     }
 
     @Override
     public void onTrackNext() {
+        position++;
+        CreateNotification.createNotification(MainActivity.this, tracks.get(position)
+                , R.drawable.pause, position, tracks.size()-1);
+        binding.mainTvTitle.setText(tracks.get(position).getTitle());
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.O){
+            notificationManager.cancelAll();
+        }
+        //
+        unregisterReceiver(broadcastReceiver);
     }
 }
