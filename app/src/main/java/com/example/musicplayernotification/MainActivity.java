@@ -115,14 +115,14 @@ public class MainActivity extends AppCompatActivity implements Playable{
     public void onTrackPrevious() {
         position--;
         CreateNotification.createNotification(MainActivity.this, tracks.get(position)
-                , R.drawable.pause, position, tracks.size()-1);
+                , R.drawable.pause, position, tracks.size()-1, false);
         binding.mainTvTitle.setText(tracks.get(position).getTitle());
     }
 
     @Override
     public void onTrackPlay() {
         CreateNotification.createNotification(MainActivity.this, tracks.get(position)
-                , R.drawable.pause, position, tracks.size()-1);
+                , R.drawable.pause, position, tracks.size()-1, false);
 
         binding.mainIbtnPlay.setImageResource(R.drawable.pause);
 
@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements Playable{
     @Override
     public void onTrackPause() {
         CreateNotification.createNotification(MainActivity.this, tracks.get(position)
-                , R.drawable.play, position, tracks.size()-1);
+                , R.drawable.play, position, tracks.size()-1,false);
 
         binding.mainIbtnPlay.setImageResource(R.drawable.play);
 
@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements Playable{
     public void onTrackNext() {
         position++;
         CreateNotification.createNotification(MainActivity.this, tracks.get(position)
-                , R.drawable.pause, position, tracks.size()-1);
+                , R.drawable.pause, position, tracks.size()-1, false);
         binding.mainTvTitle.setText(tracks.get(position).getTitle());
     }
 
